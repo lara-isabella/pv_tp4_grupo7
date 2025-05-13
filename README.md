@@ -1,8 +1,8 @@
-# Gestión de Productos - React App  
+# TRABAJO PRACTICO N4
 
-## Descripción  
-Este proyecto es una aplicación web desarrollada con **React y Vite** que permite gestionar una lista de productos.  
-Los usuarios pueden **agregar, buscar, modificar y eliminar** productos, utilizando una interfaz intuitiva y optimizada con Hooks de React.  
+## Descripcion
+## Descripcion
+Este trabajo consiste en la aplicacion de conocimientos para crear una web para la gestión de productos utilizando React. La aplicación permite a los usuarios interactuar con la pagina manera interactiva
 
 ## Funcionalidades  
 - **Agregar productos** mediante un formulario.  
