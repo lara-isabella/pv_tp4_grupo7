@@ -1,71 +1,112 @@
-import { useState, useEffect } from "react";
+import React from 'react';
+import { useState } from 'react';
 
-function Formulario({ alAgregar, alModificar, productoSeleccionado }) {
-  const [descripcion, setDescripcion] = useState("");
-  const [precioUnitario, setPrecioUnitario] = useState("");
-  const [stock, setStock] = useState("");
-  const [modoEdicion, setModoEdicion] = useState(false);
+function Formulario(){
+    const [productos, setProd] = useState([]);
+    const [nombre, setNombre] = useState('');
+    const [preciounit, setPrecioU] = useState('');
+    const [descuento, setDescuento] = useState('');
+    const [stock, setStock] = useState('');
+    const [idContador, setIdCounter] = useState(1);
+    const [estado, setEstado] = useState(true);
 
-  // Si hay un producto seleccionado, cargar sus datos en el formulario
-  useEffect(() => {
-    if (productoSeleccionado) {
-      setDescripcion(productoSeleccionado.descripcion);
-      setPrecioUnitario(productoSeleccionado.precioUnitario);
-      setStock(productoSeleccionado.stock);
-      setModoEdicion(true);
-    } else {
-      setDescripcion("");
-      setPrecioUnitario("");
-      setStock("");
-      setModoEdicion(false);
+    useEffect(() => {
+        // cuando cambia el prod seleccionado actualiza el formulario para modificar
+        if (productoSeleccionado) {
+            setId(productoSeleccionado.id);
+            setNombre(productoSeleccionado.nombre);
+            setPrecioUnit(productoSeleccionado.precioUnit);
+            setDescuento(productoSeleccionado.descuento || 0);
+            setStock(productoSeleccionado.stock);
+        } else {
+            // limpia formulario cuando no hay producto seleccionado
+            setId(null);
+            setNombre("");
+            setPrecioUnit("");
+            setDescuento("");
+            setStock("");
+        }
+    }, [productoSeleccionado]);
+
+    const manejarSubmit = (evento)=> {
+        evento.preventDefault();
+
+        const precio = parseFloat(preciounit);
+        const descuento = parseFloat(descuento);
+        const precioDescuento = precio - (precio * descuento / 100);
+
+        const nuevoProd = {
+            id: idContador,
+            nombre,
+            preciounit,
+            descuento,
+            precioFinal: precioDescuento,
+            stock,
+            estado // si esta en true el producto se meustra, si esta en false se hace la eliminacion logica que pide la indicacion
+        };
+
+        setProd([...productos, nuevoProd]);
+        setIdCounter(idContador + 1);
+        setNombre('');
+        setPrecioU('');
+        setDescuento('');
+        setStock('');
+        setEstado(true);
     }
-  }, [productoSeleccionado]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    return (
+        <div>
+            <h1> Agregar Nuevo Producto </h1>
+            <form onSubmit={manejarSubmit}>
+                <div>
+                    <label>Nombre:</label>
+                    <input
+                        type="text"
+                        value={nombre}
+                        onChange={(evento) => setNombre(evento.target.value)}
+                        required/>
+                </div>
+                <div>
+                    <label>Precio Unitario:</label>
+                    <input
+                        type="number"
+                        value={preciounit}
+                        onChange={(evento) => setPrecioU(evento.target.value)}
+                        required/>
+                </div>
+                <div>
+                    <label>Descuento:</label>
+                    <input
+                        type="number"
+                        value={descuento}
+                        onChange={(evento) => setDescuento(evento.target.value)}
+                        required/>
+                </div>
+                {preciounit && descuento && !isNaN(preciounit) && !isNaN(descuento) && (
+                    <div>
+                        <label>Precio con Descuento:</label>
+                        <p>
+                            ${(
+                                preciounit - (preciounit * descuento) / 100
 
-    const nuevoProducto = {
-      id: modoEdicion ? productoSeleccionado.id : Date.now(),
-      descripcion,
-      precioUnitario: parseFloat(precioUnitario),
-      stock: parseInt(stock),
-    };
+                            )}
+                        </p>
+                    </div>
+                )}
+                <div>
+                    <label>Stock:</label>
+                    <input
+                        type="number"
+                        value={stock}
+                        onChange={(evento) => setStock(evento.target.value)}
+                        required/>
+                </div>
+                <button type="submit">Agregar Producto</button>
+            </form>
 
-    if (modoEdicion) {
-      alModificar(nuevoProducto);
-    } else {
-      alAgregar(nuevoProducto);
-    }
-  };
+        </div>
+    )
 
-  return (
-    <form onSubmit={handleSubmit} className="mb-4">
-      <input
-        type="text"
-        placeholder="Descripción"
-        value={descripcion}
-        onChange={(e) => setDescripcion(e.target.value)}
-        className="mb-2"
-      />
-      <input
-        type="number"
-        placeholder="Precio Unitario"
-        value={precioUnitario}
-        onChange={(e) => setPrecioUnitario(e.target.value)}
-        className="mb-2"
-      />
-      <input
-        type="number"
-        placeholder="Stock"
-        value={stock}
-        onChange={(e) => setStock(e.target.value)}
-        className="mb-2"
-      />
-      <button type="submit" className="bg-blue-500 text-white px-2 py-1 rounded">
-        {modoEdicion ? "Modificar Producto" : "Agregar Producto"}
-      </button>
-    </form>
-  );
 }
 
 export default Formulario;
