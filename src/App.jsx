@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import "./App.css";
-import Formulario from "./assets/formulario";
-import BarraBusqueda from "./assets/components/barraBusqueda";
+import Formulario from "./assets/formulario.jsx";
+import BarraBusqueda from "./assets/components/barraBusqueda.jsx";
 
 function App() {
   const [productos, setProductos] = useState([]);
@@ -49,14 +49,14 @@ function App() {
   const productosFiltrados = useMemo(() => {
     const termino = terminoBusqueda.toLowerCase();
     return productos.filter((producto) =>
-      producto.descripcion.toLowerCase().includes(termino) ||
+      producto.nombre.toLowerCase().includes(termino) ||
       producto.id.toString().includes(termino)
     );
   }, [productos, terminoBusqueda]);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Gestión de Productos</h1>
+    <div>
+      <h1>Gestión de Productos</h1>
 
       <Formulario 
         alAgregar={agregarProducto} 
@@ -66,19 +66,19 @@ function App() {
 
       <BarraBusqueda alBuscar={setTerminoBusqueda} />
 
-      <h2 className="mt-4 text-xl font-semibold">Lista de Productos</h2>
+      <h2>Lista de Productos</h2>
 
       {productosFiltrados.length === 0 ? (
         <p>No hay productos disponibles.</p>
       ) : (
-        <ul className="mt-2 list-disc list-inside">
+        <ul>
           {productosFiltrados.map((producto) => (
             <li 
               key={producto.id} 
               className={`mb-2 cursor-pointer ${productoSeleccionado?.id === producto.id ? 'bg-yellow-300' : ''}`}
               onClick={() => seleccionarProducto(producto)}
             >
-              ID: {producto.id} - {producto.descripcion} - ${producto.precioUnitario} - Stock: {producto.stock}
+              ID: {producto.id} - {producto.nombre} - ${producto.precioUnit} - Stock: {producto.stock}
               <button
                 className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
                 onClick={(e) => {
