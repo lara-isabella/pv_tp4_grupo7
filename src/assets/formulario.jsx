@@ -1,9 +1,10 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Formulario({ alAgregar, alModificar, productoSeleccionado }){
     const [productos, setProd] = useState([]);
     const [nombre, setNombre] = useState('');
+    const [marca, setMarca] = useState('');
     const [preciounit, setPrecioU] = useState('');
     const [descuento, setDescuento] = useState('');
     const [stock, setStock] = useState('');
@@ -13,16 +14,18 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
     useEffect(() => {
         // cuando cambia el prod seleccionado actualiza el formulario para modificar
         if (productoSeleccionado) {
-            setId(productoSeleccionado.id);
+            setIdCounter(productoSeleccionado.id);
             setNombre(productoSeleccionado.nombre);
-            setPrecioUnit(productoSeleccionado.precioUnit);
+            setMarca(productoSeleccionado.marca);
+            setPrecioU(productoSeleccionado.precioUnit);
             setDescuento(productoSeleccionado.descuento || 0);
             setStock(productoSeleccionado.stock);
         } else {
             // limpia formulario cuando no hay producto seleccionado
-            setId(null);
+            setIdCounter(null);
             setNombre("");
-            setPrecioUnit("");
+            setMarca("");
+            setPrecioU("");
             setDescuento("");
             setStock("");
         }
@@ -32,22 +35,24 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
         evento.preventDefault();
 
         const precio = parseFloat(preciounit);
-        const descuento = parseFloat(descuento);
+        const descuentoo = parseFloat(descuento);
         const precioDescuento = precio - (precio * descuento / 100);
 
         const nuevoProd = {
             id: idContador,
             nombre,
-            preciounit,
-            descuento,
+            marca,
+            preciounit: precio,
+            descuento: descuentoo,
             precioFinal: precioDescuento,
             stock,
             estado // si esta en true el producto se meustra, si esta en false se hace la eliminacion logica que pide la indicacion
         };
 
-        setProd([...productos, nuevoProd]);
+        alAgregar(nuevoProd);
         setIdCounter(idContador + 1);
         setNombre('');
+        setMarca('');
         setPrecioU('');
         setDescuento('');
         setStock('');
@@ -67,6 +72,14 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
                         required/>
                 </div>
                 <div>
+                    <label>Marca:</label>
+                    <input
+                        type="text"
+                        value={marca}
+                        onChange={(evento) => setMarca(evento.target.value)}
+                        required/>
+                </div>
+                <div>
                     <label>Precio Unitario:</label>
                     <input
                         type="number"
@@ -82,7 +95,7 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
                         onChange={(evento) => setDescuento(evento.target.value)}
                         required/>
                 </div>
-                {preciounit && descuento && !isNaN(preciounit) && !isNaN(descuento) && (
+                {preciounit !== '' && descuento !== '' && (
                     <div>
                         <label>Precio con Descuento:</label>
                         <p>
