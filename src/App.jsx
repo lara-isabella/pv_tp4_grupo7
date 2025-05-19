@@ -78,11 +78,11 @@ function App() {
               className={`mb-2 cursor-pointer ${productoSeleccionado?.id === producto.id ? 'bg-yellow-300' : ''}`}
               onClick={() => seleccionarProducto(producto)}
             >
-              ID: {producto.id} - {producto.nombre} - ${producto.precioUnit} - Stock: {producto.stock}
+              ID: {producto.id} - Nombre: {producto.nombre} - Marca: {producto.marca} - Precio Unitario: ${producto.precioUnit} - Descuento: {producto.descuento}% - Precio Final: ${producto.precioFinal} - Stock: {producto.stock}
               <button
                 className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
                 onClick={(e) => {
-                  e.stopPropagation(); // Evita activar `seleccionarProducto()`
+                  e.stopPropagation(); // Evita activar el seleccionar producto
                   eliminarProducto(producto.id);
                 }}
               >
