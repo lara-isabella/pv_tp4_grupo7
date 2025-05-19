@@ -5,7 +5,7 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
     const [productos, setProd] = useState([]);
     const [nombre, setNombre] = useState('');
     const [marca, setMarca] = useState('');
-    const [preciounit, setPrecioU] = useState('');
+    const [precioUnit, setPrecioU] = useState('');
     const [descuento, setDescuento] = useState('');
     const [stock, setStock] = useState('');
     const [idContador, setIdCounter] = useState(1);
@@ -22,7 +22,7 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
             setStock(productoSeleccionado.stock);
         } else {
             // limpia formulario cuando no hay producto seleccionado
-            setIdCounter(null);
+            setIdCounter(1);
             setNombre("");
             setMarca("");
             setPrecioU("");
@@ -34,15 +34,16 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
     const manejarSubmit = (evento)=> {
         evento.preventDefault();
 
-        const precio = parseFloat(preciounit);
+        const precio = parseFloat(precioUnit);
         const descuentoo = parseFloat(descuento);
         const precioDescuento = precio - (precio * descuento / 100);
+
 
         const nuevoProd = {
             id: idContador,
             nombre,
             marca,
-            preciounit: precio,
+            precioUnit: precio,
             descuento: descuentoo,
             precioFinal: precioDescuento,
             stock,
@@ -83,7 +84,7 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
                     <label>Precio Unitario:</label>
                     <input
                         type="number"
-                        value={preciounit}
+                        value={precioUnit}
                         onChange={(evento) => setPrecioU(evento.target.value)}
                         required/>
                 </div>
@@ -95,12 +96,12 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
                         onChange={(evento) => setDescuento(evento.target.value)}
                         required/>
                 </div>
-                {preciounit !== '' && descuento !== '' && (
+                {precioUnit !== '' && descuento !== '' && (
                     <div>
                         <label>Precio con Descuento:</label>
                         <p>
                             ${(
-                                preciounit - (preciounit * descuento) / 100
+                                precioUnit - (precioUnit * descuento) / 100
 
                             )}
                         </p>
