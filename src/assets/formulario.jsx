@@ -1,18 +1,15 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 
-function Formulario({ alAgregar, alModificar, productoSeleccionado }){
-    const [productos, setProd] = useState([]);
-    const [nombre, setNombre] = useState('');
-    const [marca, setMarca] = useState('');
-    const [precioUnit, setPrecioU] = useState('');
-    const [descuento, setDescuento] = useState('');
-    const [stock, setStock] = useState('');
+function Formulario({ alAgregar, alModificar, productoSeleccionado }) {
+    const [nombre, setNombre] = useState("");
+    const [marca, setMarca] = useState("");
+    const [precioUnit, setPrecioU] = useState("");
+    const [descuento, setDescuento] = useState("");
+    const [stock, setStock] = useState("");
     const [idContador, setIdCounter] = useState(1);
     const [estado, setEstado] = useState(true);
 
     useEffect(() => {
-        // cuando cambia el prod seleccionado actualiza el formulario para modificar
         if (productoSeleccionado) {
             setIdCounter(productoSeleccionado.id);
             setNombre(productoSeleccionado.nombre);
@@ -21,7 +18,6 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
             setDescuento(productoSeleccionado.descuento || 0);
             setStock(productoSeleccionado.stock);
         } else {
-            // limpia formulario cuando no hay producto seleccionado
             setIdCounter(1);
             setNombre("");
             setMarca("");
@@ -31,96 +27,101 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }){
         }
     }, [productoSeleccionado]);
 
-    const manejarSubmit = (evento)=> {
+    // Calcula el precio con descuento solo cuando precioUnit o descuento cambian
+    const precioDescuento = useMemo(() => {
+        const precio = parseFloat(precioUnit) || 0;
+        const descuentoo = parseFloat(descuento) || 0;
+        return precio - (precio * descuentoo / 100);
+    }, [precioUnit, descuento]);
+
+    // Agregar producto nuevo
+    const manejarSubmit = useCallback((evento) => {
         evento.preventDefault();
-
-        const precio = parseFloat(precioUnit);
-        const descuentoo = parseFloat(descuento);
-        const precioDescuento = precio - (precio * descuento / 100);
-
 
         const nuevoProd = {
             id: idContador,
             nombre,
             marca,
-            precioUnit: precio,
-            descuento: descuentoo,
+            precioUnit: parseFloat(precioUnit),
+            descuento: parseFloat(descuento),
             precioFinal: precioDescuento,
             stock,
-            estado // si esta en true el producto se meustra, si esta en false se hace la eliminacion logica que pide la indicacion
+            estado
         };
 
         alAgregar(nuevoProd);
+        limpiarFormulario();
+    }, [idContador, nombre, marca, precioUnit, descuento, precioDescuento, stock, estado, alAgregar]);
+
+    // Modificar producto existente
+    const manejarModificar = useCallback((evento) => {
+        evento.preventDefault();
+
+        if (!productoSeleccionado) return;
+
+        const productoModificado = {
+            id: productoSeleccionado.id,
+            nombre,
+            marca,
+            precioUnit: parseFloat(precioUnit),
+            descuento: parseFloat(descuento),
+            precioFinal: precioDescuento,
+            stock,
+            estado
+        };
+
+        alModificar(productoModificado);
+        limpiarFormulario();
+    }, [productoSeleccionado, nombre, marca, precioUnit, descuento, precioDescuento, stock, estado, alModificar]);
+
+    // Limpiar formulario después de agregar o modificar
+    const limpiarFormulario = useCallback(() => {
         setIdCounter(idContador + 1);
-        setNombre('');
-        setMarca('');
-        setPrecioU('');
-        setDescuento('');
-        setStock('');
+        setNombre("");
+        setMarca("");
+        setPrecioU("");
+        setDescuento("");
+        setStock("");
         setEstado(true);
-    }
+    }, [idContador]);
 
     return (
         <div>
-            <h1> Agregar Nuevo Producto </h1>
-            <form onSubmit={manejarSubmit}>
+            <h1>{productoSeleccionado ? "Modificar Producto" : "Agregar Nuevo Producto"}</h1>
+            <form onSubmit={productoSeleccionado ? manejarModificar : manejarSubmit}>
                 <div>
                     <label>Nombre:</label>
-                    <input
-                        type="text"
-                        value={nombre}
-                        onChange={(evento) => setNombre(evento.target.value)}
-                        required/>
+                    <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
                 </div>
                 <div>
                     <label>Marca:</label>
-                    <input
-                        type="text"
-                        value={marca}
-                        onChange={(evento) => setMarca(evento.target.value)}
-                        required/>
+                    <input type="text" value={marca} onChange={(e) => setMarca(e.target.value)} required />
                 </div>
                 <div>
                     <label>Precio Unitario:</label>
-                    <input
-                        type="number"
-                        value={precioUnit}
-                        onChange={(evento) => setPrecioU(evento.target.value)}
-                        required/>
+                    <input type="number" value={precioUnit} onChange={(e) => setPrecioU(e.target.value)} required />
                 </div>
                 <div>
                     <label>Descuento:</label>
-                    <input
-                        type="number"
-                        value={descuento}
-                        onChange={(evento) => setDescuento(evento.target.value)}
-                        required/>
+                    <input type="number" value={descuento} onChange={(e) => setDescuento(e.target.value)} required />
                 </div>
-                {precioUnit !== '' && descuento !== '' && (
+                {precioUnit !== "" && descuento !== "" && (
                     <div>
                         <label>Precio con Descuento:</label>
-                        <p>
-                            ${(
-                                precioUnit - (precioUnit * descuento) / 100
-
-                            )}
-                        </p>
+                        <p>${precioDescuento.toFixed(2)}</p>
                     </div>
                 )}
                 <div>
                     <label>Stock:</label>
-                    <input
-                        type="number"
-                        value={stock}
-                        onChange={(evento) => setStock(evento.target.value)}
-                        required/>
+                    <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} required />
                 </div>
-                <button type="submit">Agregar Producto</button>
+
+                <button type="submit">
+                    {productoSeleccionado ? "Modificar Producto" : "Agregar Producto"}
+                </button>
             </form>
-
         </div>
-    )
-
+    );
 }
 
 export default Formulario;

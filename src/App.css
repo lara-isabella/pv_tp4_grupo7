@@ -1,80 +1,95 @@
+/* Estilo general */
 body {
-  font-family: "Times New Roman", serif;
-  background-color: #ffffff00; 
+  font-family: "Poppins", sans-serif; /* Cambio a una fuente más moderna */
+  background: linear-gradient(135deg, #fde1f7, #fffaf1); /* Fondo con degradado */
   margin: 0;
   padding: 20px;
+  color: #5a1e47;
 }
 
+/* Títulos */
 h1 {
-  color: #a12060; 
-  font-size: 2rem;
+  color: #a12060;
+  font-size: 2.5rem;
   text-align: center;
-  border-bottom: 2px dashed #852656;
+  border-bottom: 3px solid #852656;
   padding-bottom: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 5px rgba(161, 32, 96, 0.2);
 }
 
+/* Formularios */
 form {
-  background-color: #d356ac6e; /* Rosa pastel */
-  border: 2px dashed #ffffff;
-  padding: 15px;
-  border-radius: 15px;
+  background: rgba(211, 86, 172, 0.2); /* Fondo translúcido */
+  border: 2px solid #d63384;
+  padding: 20px;
   margin-bottom: 20px;
+  box-shadow: 5px 5px 15px rgba(211, 86, 172, 0.3); /* Sombra sutil */
 }
 
 form input,
 form button {
-  font-family: "Times New Roman", serif;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px dashed #d63384;
+  font-family: "Poppins", sans-serif;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #d63384;
   background-color: hsl(317, 100%, 97%);
   color: #d63384;
-  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+form input:focus {
+  border-color: #a12060;
+  box-shadow: 0px 0px 8px rgba(161, 32, 96, 0.5);
 }
 
 form button {
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-weight: bold;
 }
 
 form button:hover {
   background-color: #d63384;
-  color: #ff8ac7;
+  color: #fff;
+  transform: scale(1.05);
 }
 
+/* Lista de productos */
 ul {
   padding: 0;
 }
 
 li {
   list-style-type: none;
-  background-color: #ffebf8;
-  border: 2px dashed #d63384;
-  padding: 10px;
+  background: #ffebf8;
+  border: 2px solid #d63384;
+  padding: 12px;
   margin-bottom: 10px;
-  border-radius: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 3px 3px 8px rgba(211, 86, 172, 0.2);
 }
 
 li:hover {
-  background-color: #ffe4e1;
+  background: #ffe4e1;
+  transform: translateY(-5px);
 }
 
-
+/* Botones */
 button {
   background-color: #d63384;
-  color: #7b2444;
-  padding: 5px 10px;
-  border: 1px dashed #d63384;
-  border-radius: 10px;
+  color: #fff;
+  padding: 8px 15px;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
 }
 
 button:hover {
   background-color: #b30b61;
+  transform: scale(1.1);
 }
