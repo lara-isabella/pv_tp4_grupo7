@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import "./App.css";
 import Formulario from "./assets/formulario.jsx";
 import BarraBusqueda from "./assets/components/barraBusqueda.jsx";
@@ -45,6 +45,11 @@ function App() {
     setProductoSeleccionado(producto);
   };
 
+  // Buscar producto (con useCallback)
+  const buscarProducto = useCallback((termino) => {
+    setTerminoBusqueda(termino);
+  }, []);
+
   // Filtrar productos por búsqueda
   const productosFiltrados = useMemo(() => {
     const termino = terminoBusqueda.toLowerCase();
@@ -64,7 +69,7 @@ function App() {
         productoSeleccionado={productoSeleccionado}
       />
 
-      <BarraBusqueda alBuscar={setTerminoBusqueda} />
+      <BarraBusqueda alBuscar={buscarProducto} />
 
       <h2>Lista de Productos</h2>
 
@@ -97,3 +102,4 @@ function App() {
 }
 
 export default App;
+
