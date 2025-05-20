@@ -8,6 +8,8 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }) {
     const [stock, setStock] = useState("");
     const [idContador, setIdCounter] = useState(1);
     const [estado, setEstado] = useState(true);
+    const [error, setError] = useState("");
+
 
     useEffect(() => {
         if (productoSeleccionado) {
@@ -36,43 +38,67 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }) {
 
     // Agregar producto nuevo
     const manejarSubmit = useCallback((evento) => {
-        evento.preventDefault();
+    evento.preventDefault();
 
-        const nuevoProd = {
-            id: idContador,
-            nombre,
-            marca,
-            precioUnit: parseFloat(precioUnit),
-            descuento: parseFloat(descuento),
-            precioFinal: precioDescuento,
-            stock,
-            estado
-        };
+    // Convertir a número para la validación
+    const precio = parseFloat(precioUnit);
+    const desc = parseFloat(descuento);
 
-        alAgregar(nuevoProd);
-        limpiarFormulario();
-    }, [idContador, nombre, marca, precioUnit, descuento, precioDescuento, stock, estado, alAgregar]);
+    // Si alguno de los valores es negativo, muestra un error y detén el envío
+    if (precio < 0 || desc < 0) {
+        setError("El precio unitario y el descuento no pueden ser valores negativos.");
+        return;
+    }
+
+    // Si pasa la validación, limpiamos el error
+    setError("");
+    
+    const nuevoProd = {
+        id: idContador,
+        nombre,
+        marca,
+        precioUnit: precio, // ya lo convertimos
+        descuento: desc,
+        precioFinal: precioDescuento,
+        stock,
+        estado
+    };
+
+    alAgregar(nuevoProd);
+    limpiarFormulario();
+}, [idContador, nombre, marca, precioUnit, descuento, precioDescuento, stock, estado, alAgregar]);
 
     // Modificar producto existente
     const manejarModificar = useCallback((evento) => {
-        evento.preventDefault();
+    evento.preventDefault();
 
-        if (!productoSeleccionado) return;
+    if (!productoSeleccionado) return;
 
-        const productoModificado = {
-            id: productoSeleccionado.id,
-            nombre,
-            marca,
-            precioUnit: parseFloat(precioUnit),
-            descuento: parseFloat(descuento),
-            precioFinal: precioDescuento,
-            stock,
-            estado
-        };
+    const precio = parseFloat(precioUnit);
+    const desc = parseFloat(descuento);
 
-        alModificar(productoModificado);
-        limpiarFormulario();
-    }, [productoSeleccionado, nombre, marca, precioUnit, descuento, precioDescuento, stock, estado, alModificar]);
+    if (precio < 0 || desc < 0) {
+        setError("El precio unitario y el descuento no pueden ser valores negativos.");
+        return;
+    }
+
+    setError("");
+
+    const productoModificado = {
+        id: productoSeleccionado.id,
+        nombre,
+        marca,
+        precioUnit: precio,
+        descuento: desc,
+        precioFinal: precioDescuento,
+        stock,
+        estado
+    };
+
+    alModificar(productoModificado);
+    limpiarFormulario();
+}, [productoSeleccionado, nombre, marca, precioUnit, descuento, precioDescuento, stock, estado, alModificar]);
+
 
     // Limpiar formulario después de agregar o modificar
     const limpiarFormulario = useCallback(() => {
@@ -88,6 +114,7 @@ function Formulario({ alAgregar, alModificar, productoSeleccionado }) {
     return (
         <div>
             <h1>{productoSeleccionado ? "Modificar Producto" : "Agregar Nuevo Producto"}</h1>
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <form onSubmit={productoSeleccionado ? manejarModificar : manejarSubmit}>
                 <div>
                     <label>Nombre:</label>
