@@ -4,21 +4,21 @@ import Formulario from "./assets/formulario.jsx";
 import BarraBusqueda from "./assets/components/barraBusqueda.jsx";
 
 function App() {
-  const [productos, setProductos] = useState([]);
-  const [terminoBusqueda, setTerminoBusqueda] = useState("");
-  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [productos, setProductos] = useState(() => {
+  return JSON.parse(localStorage.getItem("productos")) || [];
+});
 
-  const productosIniciales = useMemo(() => {
-    return JSON.parse(localStorage.getItem("productos")) || [];
-  }, []);
+const [terminoBusqueda, setTerminoBusqueda] = useState("");
+const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-  useEffect(() => {
-    setProductos(productosIniciales);
-  }, [productosIniciales]);
-
-  useEffect(() => {
-    localStorage.setItem("productos", JSON.stringify(productos));
-  }, [productos]);
+useEffect(() => {
+  console.log(
+    "%cProductos actualizados:",
+    "color: green; font-size: 16px; font-weight: bold;"
+  );
+  console.table(productos);
+  localStorage.setItem("productos", JSON.stringify(productos));
+}, [productos]);
 
   const agregarProducto = useCallback((productoNuevo) => {
     setProductos((prevProductos) => [...prevProductos, productoNuevo]);
@@ -47,12 +47,12 @@ function App() {
   }, []);
 
   const productosFiltrados = useMemo(() => {
-    const termino = terminoBusqueda.toLowerCase();
-    return productos.filter((producto) =>
-      producto.nombre.toLowerCase().includes(termino) ||
-      producto.id.toString().includes(termino)
-    );
-  }, [productos, terminoBusqueda]);
+  const termino = terminoBusqueda.trim().toLowerCase();
+  return productos.filter((producto) =>
+    producto.nombre.toLowerCase().includes(termino) ||
+    producto.id.toString().includes(termino)
+  );
+}, [productos, terminoBusqueda]);
 
   return (
     <div>
