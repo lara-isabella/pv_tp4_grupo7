@@ -3,7 +3,7 @@ import "./App.css";
 import Formulario from "./assets/formulario.jsx";
 import BarraBusqueda from "./assets/components/barraBusqueda.jsx";
 
-function App() {
+function App() { 
   const [productos, setProductos] = useState([]);
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
@@ -17,9 +17,15 @@ function App() {
     setUltimoId(idGuardado);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("productos", JSON.stringify(productos));
-  }, [productos]);
+
+useEffect(() => {
+  console.log(
+    "%cProductos actualizados:",
+    "color: green; font-size: 16px; font-weight: bold;"
+  );
+  console.table(productos);
+  localStorage.setItem("productos", JSON.stringify(productos));
+}, [productos]);
 
   useEffect(() => {
     localStorage.setItem("ultimoId", ultimoId.toString());
@@ -56,6 +62,7 @@ function App() {
   }, []);
 
   const productosFiltrados = useMemo(() => {
+
     const termino = terminoBusqueda.toLowerCase();
 
     return productos.filter((producto) => {
@@ -70,6 +77,7 @@ function App() {
       }
     });
   }, [productos, terminoBusqueda]);
+
 
   const productosEliminados = useMemo(() => {
     return productos.filter((producto) => producto.estado === false);
