@@ -1,25 +1,32 @@
-import { useState } from 'react';
+//Barra para la búsqueda de productos
+import { useState, useCallback } from "react";
 
-const BarraBusqueda = ({ alBuscar }) => {
-  const [terminoBusqueda, setTerminoBusqueda] = useState('');
+function BarraBusqueda({ alBuscar }) {
+  const [terminoLocal, setTerminoLocal] = useState("");
 
-  const manejarCambio = (evento) => {
-    const valor = evento.target.value;
-    setTerminoBusqueda(valor);
-    alBuscar(valor); 
+  const manejarCambio = (e) => {
+    setTerminoLocal(e.target.value);
   };
 
+  const manejarBusqueda = useCallback(
+    (e) => {
+      e.preventDefault(); // Evita que se recargue la página al enviar el formulario
+      alBuscar(terminoLocal);
+    },
+    [terminoLocal, alBuscar]
+  );
+
   return (
-    <div className="p-2">
+    <form onSubmit={manejarBusqueda}>
       <input
         type="text"
-        placeholder="Buscar por ID o descripción"
-        value={terminoBusqueda}
+        placeholder="Busca por nombre o ID :)"
+        value={terminoLocal}
         onChange={manejarCambio}
-        className="border rounded p-2 w-full"
       />
-    </div>
+      <button type="submit">Buscar</button>
+    </form>
   );
-};
+}
 
 export default BarraBusqueda;
