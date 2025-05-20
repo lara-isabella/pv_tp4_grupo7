@@ -1,22 +1,17 @@
-import { useState } from 'react';
+//Barra para busqueda de productos
+import React, { useCallback } from "react";
 
 const BarraBusqueda = ({ alBuscar }) => {
-  const [terminoBusqueda, setTerminoBusqueda] = useState('');
-
-  const manejarCambio = (evento) => {
-    const valor = evento.target.value;
-    setTerminoBusqueda(valor);
-    alBuscar(valor); 
-  };
+  const manejarCambio = useCallback((e) => {
+    alBuscar(e.target.value);
+  }, [alBuscar]);
 
   return (
-    <div className="p-2">
+    <div>
       <input
         type="text"
-        placeholder="Buscar por ID o descripción"
-        value={terminoBusqueda}
+        placeholder="Busca por nombre o ID"
         onChange={manejarCambio}
-        className="border rounded p-2 w-full"
       />
     </div>
   );
