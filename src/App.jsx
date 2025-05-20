@@ -8,49 +8,44 @@ function App() {
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-  // Cargar productos desde localStorage al iniciar
-  useEffect(() => {
-    const productosGuardados = JSON.parse(localStorage.getItem("productos")) || [];
-    setProductos(productosGuardados);
+  const productosIniciales = useMemo(() => {
+    return JSON.parse(localStorage.getItem("productos")) || [];
   }, []);
 
-  // Guardar productos en localStorage cuando cambien
+  useEffect(() => {
+    setProductos(productosIniciales);
+  }, [productosIniciales]);
+
   useEffect(() => {
     localStorage.setItem("productos", JSON.stringify(productos));
   }, [productos]);
 
-  // Agregar producto
-  const agregarProducto = (productoNuevo) => {
-    setProductos([...productos, productoNuevo]);
-  };
+  const agregarProducto = useCallback((productoNuevo) => {
+    setProductos((prevProductos) => [...prevProductos, productoNuevo]);
+  }, []);
 
-  // Eliminar producto
-  const eliminarProducto = (id) => {
-    const productosActualizados = productos.filter((producto) => producto.id !== id);
-    setProductos(productosActualizados);
-    setProductoSeleccionado(null); // Si se estaba editando, deseleccionar
-  };
+  const eliminarProducto = useCallback((id) => {
+    setProductos((prevProductos) => prevProductos.filter((producto) => producto.id !== id));
+    setProductoSeleccionado(null);
+  }, []);
 
-  // Modificar producto
-  const modificarProducto = (productoModificado) => {
-    const productosActualizados = productos.map((producto) =>
-      producto.id === productoModificado.id ? productoModificado : producto
+  const modificarProducto = useCallback((productoModificado) => {
+    setProductos((prevProductos) =>
+      prevProductos.map((producto) => 
+        producto.id === productoModificado.id ? productoModificado : producto
+      )
     );
-    setProductos(productosActualizados);
-    setProductoSeleccionado(null); // Termina la edición
-  };
+    setProductoSeleccionado(null);
+  }, []);
 
-  // Seleccionar producto para editar
-  const seleccionarProducto = (producto) => {
+  const seleccionarProducto = useCallback((producto) => {
     setProductoSeleccionado(producto);
-  };
+  }, []);
 
-  // Buscar producto (con useCallback)
   const buscarProducto = useCallback((termino) => {
     setTerminoBusqueda(termino);
   }, []);
 
-  // Filtrar productos por búsqueda
   const productosFiltrados = useMemo(() => {
     const termino = terminoBusqueda.toLowerCase();
     return productos.filter((producto) =>
@@ -87,7 +82,7 @@ function App() {
               <button
                 className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
                 onClick={(e) => {
-                  e.stopPropagation(); // Evita activar el seleccionar producto
+                  e.stopPropagation(); 
                   eliminarProducto(producto.id);
                 }}
               >
